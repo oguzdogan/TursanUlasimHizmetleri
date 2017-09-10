@@ -2,20 +2,30 @@
     ViewBag.Title = "Home Page";
 }
 
-@ViewBag.cpuerror
-<script>
-    window.onload = function () {
-        var button = document.getElementById('clickButton');
-        setInterval(function () {
-            button.click();
-        }, 30000);  // this will make it click again every 1000 miliseconds
-    };
+<script type="text/javascript">
+    setTimeout(function () {
+        window.location.reload(1);
+    }, 30000);
 </script>
-<form action="#" method="post">
-    <input type="submit" value="Başlat" id="clickButton" />
-</form>
-Download rate = @TempData["rate"] kb/sec<br />
-
-RAM = @TempData["ram"]  MB <br />
-
-CPU = @TempData["cpu"] %
+<div class="form-group" style="margin-top:5%;padding-bottom:5%;">
+    <div class="col-md-4">
+        Download rate = @Session["rate"] kb/sec<br />
+    </div>
+    <div class="col-md-4">
+        RAM = @Session["ram"]  MB <br />
+    </div>
+    <div class="col-md-4">
+        CPU = @Session["cpu"] %
+    </div>
+</div>
+<div>
+    <div class="col-md-4">
+         @TempData["rateerror"]<br />
+    </div>
+    <div class="col-md-4">
+        @TempData["ramerror"]<br />
+    </div>
+    <div class="col-md-4">
+        @TempData["cpuerror"] 
+    </div>
+</div>

@@ -15,12 +15,7 @@ namespace TursanDegerlendirme.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult Index(string Name = "https://www.google.com.tr")
-        {
-            Uri URL = new Uri(Name);
+            Uri URL = new Uri("https://www.google.com.tr");
             WebClient wc = new WebClient();
             double starttime = Environment.TickCount;
             wc.DownloadFile(URL, Server.MapPath("file/speedtest.txt"));
@@ -28,7 +23,15 @@ namespace TursanDegerlendirme.Controllers
             double secs = Math.Floor(endtime - starttime) / 1000;
             double secs2 = Math.Round(secs, 0);
             double kbsec = Math.Round(1024 / secs);
-            TempData["rate"] = kbsec ;
+            if (Session["rate"]==null)
+            {
+                Session["rate"] = 0;
+            }
+            if (Convert.ToDouble(Session["rate"])>kbsec)
+            {
+                TempData["rateerror"] = "Bağlantı Hızı Düştü";
+            }
+            Session["rate"] = kbsec;
             PerformanceCounter availableBytes = new PerformanceCounter("Memory", "Available MBytes", true);
             float numBytes = availableBytes.NextValue();
             PerformanceCounter cpuCounter = new PerformanceCounter();
@@ -37,8 +40,25 @@ namespace TursanDegerlendirme.Controllers
             cpuCounter.InstanceName = "_Total";
             var unused = cpuCounter.NextValue();
             System.Threading.Thread.Sleep(1000);
-            TempData["cpu"] = (cpuCounter.NextValue());
-            TempData["ram"] = numBytes.ToString();
+            if (Session["cpu"] == null)
+            {
+                Session["cpu"] = 0;
+            }
+            float a = cpuCounter.NextValue();
+            if (float.Parse(Session["cpu"].ToString()) > a)
+            {
+                TempData["cpuerror"] = "CPU Değeri Düştü";
+            }
+            if (Session["ram"] == null)
+            {
+                Session["ram"] = 0;
+            }
+            if (float.Parse(Session["ram"].ToString()) > float.Parse(numBytes.ToString()))
+            {
+                TempData["ramerror"] = "Ram Değeri Düştü";
+            }
+            Session["cpu"] = a.ToString();
+            Session["ram"] = numBytes.ToString();
             availableBytes.Close();
             return View();
         }
